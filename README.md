@@ -4,6 +4,9 @@ xdebug-log-filter
 A little script to monitor a web server log file for errors but filter out 
 entire xdebug error and stack trace blocks that we want to ignore.
 
+Why? See my blog post:
+[Ignoring errors from third party WordPress plugins while developing in debug mode](http://bradt.ca/blog/ignoring-errors-wordpress-debug-mode/)
+
 Installation
 ------------
 
