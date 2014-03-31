@@ -1,0 +1,60 @@
+#!/usr/bin/php
+<?php
+global $regexes;
+
+include dirname( __FILE__ ) . '/config.php';
+
+$opts = getopt( 'f' );
+
+if ( !isset( $opts['f'] ) ) {
+	system( "tail -f $debug_log_path | ./{$argv[0]} -f" );
+	exit;
+}
+
+function passes_filter( $block ) {
+	global $regexes;
+
+	foreach ( $regexes as $regex ) {
+		if ( preg_match( $regex, $block ) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function is_trace_start( $line ) {
+	return preg_match( '@^\[(.*?)\] PHP Stack trace:@', $line );
+}
+
+function is_trace_line( $line ) {
+	return preg_match( '@^\[(.*?)\] PHP \s+[0-9]+\.@', $line );
+}
+
+$is_tracing = false;
+$block = '';
+$fp = fopen( 'php://stdin', 'r' );
+while ( ( $line = fgets( $fp ) ) !== false ) {
+
+	if ( !is_trace_start( $line ) && !is_trace_line( $line ) ) {
+
+		if ( passes_filter( $block ) ) {
+			echo $block;
+		}
+		
+		$is_tracing = false;
+		$block = $line;
+		continue;
+	}
+
+	if ( $block && is_trace_start( $line ) ) {
+		$is_tracing = true;
+		$block .= $line;
+		continue;
+	}
+
+	if ( $is_tracing && is_trace_line( $line ) ) {
+		$block .= $line;
+	}
+
+}
