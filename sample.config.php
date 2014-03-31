@@ -6,5 +6,5 @@ $log_path = '/home/roger/public_html/wp-content/debug.log' );
 // XDebug error and stack trace. If ANY of the regular expressions
 // match, the entire error and stack track will be filtered out
 $regexes = array(
-	'@woocommerce-delivery-notes\.php:27@' // Deprecated function in Delivery Notes addon
+	//'@woocommerce-delivery-notes\.php:27@' // Deprecated function in Delivery Notes addon
 );
