@@ -1,19 +1,31 @@
 #!/usr/bin/php
 <?php
-global $regexes;
-
-include dirname( __FILE__ ) . '/config.php';
-
-$opts = getopt( 'f' );
-
-if ( !isset( $opts['f'] ) ) {
-	system( "tail -f $debug_log_path | ./{$argv[0]} -f" );
+if ( !isset( $argv[1] ) ) {
+	$script_name = basename( __FILE__ );
+	echo "Usage: $script_name <config_file>.php\n";
 	exit;
 }
 
-function passes_filter( $block ) {
-	global $regexes;
+$config_file_path = dirname( __FILE__ ) . '/' . $argv[1];
 
+if ( !file_exists( $config_file_path ) ) {
+	echo "Could not find config file $config_file_path.\n";
+	exit;
+}
+
+include $config_file_path;
+
+if ( !file_exists( $log_path ) ) {
+	echo "Could not find log path $log_path.\n";
+	exit;
+}
+
+if ( !isset( $argv[2] ) ) {
+	system( "tail -f $log_path | {$argv[0]} {$argv[1]} watch" );
+	exit;
+}
+
+function passes_filter( $block, $regexes ) {
 	foreach ( $regexes as $regex ) {
 		if ( preg_match( $regex, $block ) ) {
 			return false;
@@ -38,7 +50,7 @@ while ( ( $line = fgets( $fp ) ) !== false ) {
 
 	if ( !is_trace_start( $line ) && !is_trace_line( $line ) ) {
 
-		if ( passes_filter( $block ) ) {
+		if ( passes_filter( $block, $regexes ) ) {
 			echo $block;
 		}
 		
