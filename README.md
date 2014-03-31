@@ -1,8 +1,8 @@
 xdebug-log-filter
 =================
 
-A little script to monitor a web server log file for errors and filter out 
-entire xdebug error and stack trace blocks from 3rd-party code.
+A little script to monitor a web server log file for errors but filter out 
+entire xdebug error and stack trace blocks that we want to ignore.
 
 Installation
 ------------
