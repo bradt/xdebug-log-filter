@@ -1,6 +1,6 @@
 <?php
 // Path to the log file
-$log_path = '/home/roger/public_html/wp-content/debug.log' );
+$log_path = '/home/roger/public_html/wp-content/debug.log';
 
 // Array of regular expressions. Each one will be run against each 
 // XDebug error and stack trace. If ANY of the regular expressions
