@@ -15,10 +15,24 @@ if ( !file_exists( $config_file_path ) ) {
 
 include $config_file_path;
 
-if ( !file_exists( $log_path ) ) {
-	echo "Could not find log path $log_path.\n";
-	exit;
+if ( !is_array( $log_path ) ) {
+    $log_path = array( $log_path );
 }
+
+$is_log_missing = false;
+$log_paths = $log_path;
+foreach ( $log_paths as $log_path ) {
+    if ( !file_exists( $log_path ) ) {
+        echo "Could not find log path $log_path.\n";
+        $is_log_missing = true;
+    }
+}
+
+if ( $is_log_missing ) {
+    exit;
+}
+
+$log_path = implode( ' ', $log_paths );
 
 if ( !isset( $argv[2] ) ) {
 	system( "tail -f $log_path | {$argv[0]} {$argv[1]} watch" );
