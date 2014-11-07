@@ -54,7 +54,7 @@ function is_trace_line( $line ) {
 
 $is_tracing = false;
 $block = '';
-$fp = popen( "tail -f $log_path 2>&1", 'r' );
+$fp = popen( "tail -f -n 0 -q $log_path 2>&1", 'r' );
 while ( !feof( $fp ) ) {
 
     $line = fgets( $fp );
