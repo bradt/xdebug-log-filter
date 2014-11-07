@@ -52,34 +52,45 @@ function is_trace_line( $line ) {
 	return preg_match( '@^\[(.*?)\] PHP \s+[0-9]+\.@', $line );
 }
 
-$is_tracing = false;
-$block = '';
 $fp = popen( "tail -f -n 0 -q $log_path 2>&1", 'r' );
+
+// Makes fgets() return immediately and doesn't wait for input
+stream_set_blocking( $fp, 0 );
+
 while ( !feof( $fp ) ) {
 
-    $line = fgets( $fp );
+    $is_tracing = false;
+    $block = '';
 
-	if ( !is_trace_start( $line ) && !is_trace_line( $line ) ) {
+    while ( $line = fgets( $fp ) ) {
 
-		if ( passes_filter( $block, $regexes ) ) {
-			echo $block;
-            system( 'tput bel 2>&1' );
-		}
+        if ( !is_trace_start( $line ) && !is_trace_line( $line ) ) {
 
-		$is_tracing = false;
-		$block = $line;
-		continue;
-	}
+            if ( passes_filter( $block, $regexes ) ) {
+                echo $block;
+                system( 'tput bel 2>&1' );
+            }
 
-	if ( $block && is_trace_start( $line ) ) {
-		$is_tracing = true;
-		$block .= $line;
-		continue;
-	}
+            $is_tracing = false;
+            $block = $line;
+            continue;
+        }
 
-	if ( $is_tracing && is_trace_line( $line ) ) {
-		$block .= $line;
-	}
+        if ( $block && is_trace_start( $line ) ) {
+            $is_tracing = true;
+			$block .= $line;
+            continue;
+        }
+
+        if ( $is_tracing && is_trace_line( $line ) ) {
+            $block .= $line;
+        }
+
+    }
+
+    if ( $block ) {
+        echo $block;
+    }
 
 }
 
