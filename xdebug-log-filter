@@ -59,6 +59,8 @@ stream_set_blocking( $fp, 0 );
 
 while ( !feof( $fp ) ) {
 
+    sleep( 1 );
+
     $is_tracing = false;
     $block = '';
 
