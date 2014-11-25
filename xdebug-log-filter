@@ -68,7 +68,7 @@ while ( !feof( $fp ) ) {
 
         if ( !is_trace_start( $line ) && !is_trace_line( $line ) ) {
 
-            if ( passes_filter( $block, $regexes ) ) {
+            if ( $block && passes_filter( $block, $regexes ) ) {
                 echo $block;
                 system( 'tput bel 2>&1' );
             }
