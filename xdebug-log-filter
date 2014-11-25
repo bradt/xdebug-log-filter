@@ -92,6 +92,7 @@ while ( !feof( $fp ) ) {
     
     if ( $block && passes_filter( $block, $regexes ) ) {
         echo $block;
+        system( 'tput bel 2>&1' );
     }
 
 }
